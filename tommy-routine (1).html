@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tommy Routine</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
+
+:root{
+  --paper:#FAF6ED;
+  --paper2:#F1EAD9;
+  --card:#FFFDF8;
+  --ink:#2B3A2F;
+  --ink-soft:#5B6A57;
+  --ink-faint:#8A9385;
+  --amber:#E2A33D;
+  --amber-dark:#C97F1E;
+  --clay:#A65E2E;
+  --danger:#B23A24;
+  --danger-bg:#FBEBE5;
+  --safe:#4F7942;
+  --safe-bg:#EDF3E7;
+  --line:#DED2B4;
+  --line-soft:#EDE4CE;
+  --radius:16px;
+  --shadow:0 1px 2px rgba(43,58,47,0.06), 0 6px 20px rgba(43,58,47,0.06);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+.mono{font-family:'JetBrains Mono',monospace;}
+h1,h2,h3,.display{font-family:'Fraunces',serif;}
+
+/* subtle paper texture */
+.texture{
+  position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.5;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(43,58,47,0.025) 0, transparent 40%),
+    radial-gradient(circle at 80% 60%, rgba(226,163,61,0.05) 0, transparent 45%);
+}
+
+#app{position:relative; z-index:1; max-width:520px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column;}
+
+/* ---------- App bar ---------- */
+.appbar{
+  position:sticky; top:0; z-index:20;
+  background:rgba(250,246,237,0.92);
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line-soft);
+  padding:14px 18px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px;
+}
+.brand{display:flex; align-items:center; gap:10px; cursor:pointer;}
+.brand-mark{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(160deg,var(--amber),var(--amber-dark));
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px; box-shadow:var(--shadow); flex-shrink:0;
+}
+.brand-text{display:flex; flex-direction:column; line-height:1.1;}
+.brand-text b{font-family:'Fraunces',serif; font-size:16.5px; font-weight:700; letter-spacing:-0.01em;}
+.brand-text span{font-size:10.5px; color:var(--ink-faint); letter-spacing:0.04em; text-transform:uppercase;}
+.appbar-right{display:flex; align-items:center; gap:8px;}
+.pill-btn{
+  border:1px solid var(--line); background:var(--card); color:var(--ink-soft);
+  font-size:12.5px; font-weight:600; padding:7px 12px; border-radius:999px; cursor:pointer;
+  font-family:'Inter',sans-serif; white-space:nowrap;
+}
+.pill-btn:active{transform:scale(0.97);}
+
+/* ---------- Screens ---------- */
+.screen{display:none; flex:1; flex-direction:column;}
+.screen.active{display:flex;}
+
+/* ---------- Welcome ---------- */
+.welcome-hero{padding:40px 24px 18px; text-align:center;}
+.welcome-badge{
+  display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase; color:var(--amber-dark);
+  background:rgba(226,163,61,0.14); border:1px solid rgba(226,163,61,0.3);
+  padding:5px 12px; border-radius:999px; margin-bottom:18px;
+}
+.welcome-hero h1{font-size:38px; font-weight:700; margin:0 0 10px; letter-spacing:-0.02em; line-height:1.05;}
+.welcome-hero p{color:var(--ink-soft); font-size:15.5px; margin:0 auto; max-width:320px; line-height:1.5;}
+
+.section-label{
+  padding:0 24px; margin:26px 0 12px; display:flex; align-items:baseline; justify-content:space-between;
+}
+.section-label h2{font-size:13px; text-transform:uppercase; letter-spacing:0.09em; color:var(--ink-faint); font-weight:600; margin:0; font-family:'Inter',sans-serif;}
+
+.breed-grid{
+  padding:0 20px 30px; display:grid; grid-template-columns:1fr 1fr; gap:12px;
+}
+.tag-card{
+  position:relative; background:var(--card); border:1px solid var(--line);
+  border-radius:14px; padding:18px 14px 14px; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px;
+  box-shadow:var(--shadow); transition:transform .12s ease, box-shadow .12s ease;
+}
+.tag-card:active{transform:scale(0.96);}
+.tag-card::before{
+  content:''; position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+  width:16px; height:16px; border-radius:50%; background:var(--paper);
+  border:1px solid var(--line);
+}
+.tag-emoji{font-size:30px; line-height:1;}
+.tag-name{font-weight:600; font-size:13.5px; letter-spacing:-0.01em;}
+.tag-card.all-dogs{grid-column:1 / -1; flex-direction:row; justify-content:center; gap:12px; padding:14px;}
+.tag-card.all-dogs .tag-emoji{font-size:22px;}
+
+.footer-disclaimer{
+  padding:16px 24px 34px; text-align:center; font-size:11.5px; color:var(--ink-faint); line-height:1.5;
+}
+
+/* ---------- Dashboard ---------- */
+.breed-header{
+  margin:16px 18px 4px; padding:18px; border-radius:18px;
+  background:linear-gradient(155deg, var(--card), var(--paper2));
+  border:1px solid var(--line); box-shadow:var(--shadow);
+  display:flex; align-items:center; gap:14px;
+}
+.breed-header .icon{
+  width:52px;height:52px;border-radius:13px; flex-shrink:0;
+  background:var(--accent, var(--amber)); display:flex; align-items:center; justify-content:center; font-size:26px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+}
+.breed-header .meta{flex:1; min-width:0;}
+.breed-header .meta .eyebrow{font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-faint); font-weight:600;}
+.breed-header .meta h2{font-size:20px; margin:2px 0 0; font-weight:700; letter-spacing:-0.01em;}
+
+.dash-grid{padding:16px 18px 10px; display:grid; grid-template-columns:1fr 1fr; gap:11px;}
+.dash-card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 13px;
+  cursor:pointer; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow);
+}
+.dash-card:active{transform:scale(0.97);}
+.dash-card .num{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-faint); font-weight:600;}
+.dash-card .ic{font-size:20px;}
+.dash-card .lbl{font-size:13px; font-weight:600; line-height:1.25; letter-spacing:-0.01em;}
+.dash-card.wide{grid-column:1 / -1; flex-direction:row; align-items:center; justify-content:space-between;}
+.dash-card.wide .lbl{font-size:14px;}
+.dash-card.report{background:linear-gradient(155deg,#2B3A2F,#3d5140); border-color:#2B3A2F;}
+.dash-card.report .lbl, .dash-card.report .num{color:#F1EAD9;}
+.dash-card.report .ic{filter:none;}
+
+/* ---------- Content screens ---------- */
+.content-wrap{padding:14px 18px 36px; flex:1;}
+.back-row{display:flex; align-items:center; gap:10px; padding:14px 18px 0;}
+.back-btn{
+  border:none; background:var(--card); border:1px solid var(--line); width:34px;height:34px;border-radius:10px;
+  cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; color:var(--ink);
+  flex-shrink:0;
+}
+.page-title{padding:8px 18px 2px;}
+.page-title .eyebrow{font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-faint); font-weight:600;}
+.page-title h2{font-size:23px; margin:3px 0 0; font-weight:700; letter-spacing:-0.015em;}
+
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px; padding:15px 16px; margin-bottom:11px;
+  box-shadow:var(--shadow);
+}
+.card .k{font-weight:700; font-size:14px; margin:0 0 4px; letter-spacing:-0.01em;}
+.card .v{font-size:13.6px; color:var(--ink-soft); line-height:1.5; margin:0;}
+
+.card.safe{border-color:#CBDDBF; background:var(--safe-bg);}
+.card.safe .k{color:var(--safe);}
+.card.danger{border-color:#E9C6BB; background:var(--danger-bg);}
+.card.danger .k{color:var(--danger);}
+
+.group-title{font-size:11.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-faint); font-weight:700; margin:20px 2px 10px;}
+.group-title:first-child{margin-top:4px;}
+
+.warn-strip{
+  display:flex; gap:10px; align-items:flex-start; background:var(--danger-bg); border:1px solid #E9C6BB;
+  border-radius:12px; padding:12px 13px; margin:16px 0; font-size:12.8px; color:#7A2A18; line-height:1.5;
+}
+.warn-strip.amber{background:rgba(226,163,61,0.14); border-color:rgba(226,163,61,0.35); color:var(--amber-dark);}
+.warn-strip .wi{font-size:16px; flex-shrink:0;}
+
+/* ---------- Disease list ---------- */
+.disease-row{
+  background:var(--card); border:1px solid var(--line); border-radius:13px; padding:13px 14px; margin-bottom:9px;
+  cursor:pointer; display:flex; align-items:center; justify-content:between; gap:10px; box-shadow:var(--shadow);
+}
+.disease-row .dtext{flex:1;}
+.disease-row .dname{font-weight:700; font-size:14px; margin:0 0 3px;}
+.disease-row .ddesc{font-size:12.6px; color:var(--ink-soft); line-height:1.4; margin:0;}
+.disease-row .arrow{color:var(--ink-faint); font-size:15px; flex-shrink:0;}
+
+.search-box{
+  display:flex; align-items:center; gap:8px; background:var(--card); border:1.5px solid var(--line);
+  border-radius:12px; padding:11px 13px; margin:2px 0 18px;
+}
+.search-box input{
+  border:none; outline:none; background:transparent; font-family:'Inter',sans-serif; font-size:14px; width:100%; color:var(--ink);
+}
+.search-box .si{color:var(--ink-faint); font-size:15px;}
+.search-go{
+  border:none; background:var(--ink); color:var(--paper); font-weight:600; font-size:12.5px;
+  padding:8px 13px; border-radius:9px; cursor:pointer; white-space:nowrap;
+}
+
+/* ---------- Disease-specific plan ---------- */
+.plan-header{
+  padding:16px; border-radius:16px; background:linear-gradient(155deg,#2B3A2F,#3d5140); color:var(--paper2);
+  margin:0 0 16px;
+}
+.plan-header .eyebrow{font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; opacity:0.7; font-weight:600;}
+.plan-header h2{font-size:21px; margin:4px 0 8px; font-weight:700;}
+.plan-header p{font-size:13px; opacity:0.85; margin:0; line-height:1.5;}
+.plan-source{display:inline-block; margin-top:10px; font-size:10.5px; background:rgba(255,255,255,0.12); padding:4px 10px; border-radius:999px; letter-spacing:0.03em;}
+
+.plan-section{margin-bottom:16px;}
+.plan-section .ph{display:flex; align-items:center; gap:8px; margin-bottom:9px;}
+.plan-section .ph .pi{font-size:17px;}
+.plan-section .ph h3{font-size:14.5px; margin:0; font-weight:700; letter-spacing:-0.01em;}
+.plan-section ul{margin:0; padding-left:18px;}
+.plan-section li{font-size:13.4px; color:var(--ink-soft); line-height:1.55; margin-bottom:6px;}
+.empty-note{font-size:12.8px; color:var(--ink-faint); font-style:italic; padding:2px 0 2px 2px;}
+
+.not-covered{
+  text-align:center; padding:40px 20px;
+}
+.not-covered .nc-ic{font-size:40px; margin-bottom:14px;}
+.not-covered h3{font-size:18px; margin:0 0 8px;}
+.not-covered p{font-size:13.5px; color:var(--ink-soft); line-height:1.55; max-width:320px; margin:0 auto;}
+
+/* ---------- report ---------- */
+.report-block{margin-bottom:22px;}
+.report-block h3{font-size:15px; margin:0 0 10px; font-weight:700; display:flex; align-items:center; gap:8px;}
+
+/* Tab bar for report mode toggle within disease detail (none needed) */
+
+.tab-strip{display:flex; gap:8px; padding:0 18px 14px; flex-wrap:wrap;}
+.tab{
+  border:1px solid var(--line); background:var(--card); font-size:12px; font-weight:600; color:var(--ink-soft);
+  padding:7px 12px; border-radius:999px; cursor:pointer;
+}
+.tab.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+::selection{background:rgba(226,163,61,0.35);}
+</style>
+</head>
+<body>
+<div class="texture"></div>
+<div id="app">
+
+  <div class="appbar" id="appbar" style="display:none;">
+    <div class="brand" onclick="goHome()">
+      <div class="brand-mark">🐾</div>
+      <div class="brand-text"><b>Tommy Routine</b><span id="appbarBreed">care companion</span></div>
+    </div>
+    <div class="appbar-right">
+      <button class="pill-btn" onclick="goToBreedPicker()">Change dog</button>
+    </div>
+  </div>
+
+  <!-- WELCOME / BREED SELECT -->
+  <div class="screen active" id="screen-welcome">
+    <div class="welcome-hero">
+      <div class="welcome-badge">🐾 &nbsp;Tommy Routine</div>
+      <h1>Your dog's daily<br/>care companion.</h1>
+      <p>Personalized food, activity, medicine and health guidance — built strictly from your dog's own breed profile.</p>
+    </div>
+    <div class="section-label"><h2>Choose your dog's breed</h2></div>
+    <div class="breed-grid" id="breedGrid"></div>
+    <div class="footer-disclaimer">Tommy Routine provides educational dog-care information based on its available knowledge sources. It is not a replacement for professional veterinary diagnosis or treatment.</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="screen" id="screen-dashboard">
+    <div class="breed-header" id="breedHeader"></div>
+    <div class="dash-grid" id="dashGrid"></div>
+    <div class="footer-disclaimer">Tommy Routine provides educational dog-care information based on its available knowledge sources. It is not a replacement for professional veterinary diagnosis or treatment.</div>
+  </div>
+
+  <!-- GENERIC SECTION (food, foodAvoid, activities, activitiesAvoid, medicines, environment) -->
+  <div class="screen" id="screen-section">
+    <div class="back-row"><button class="back-btn" onclick="goToDashboard()">←</button></div>
+    <div class="page-title"><div class="eyebrow" id="secEyebrow"></div><h2 id="secTitle"></h2></div>
+    <div class="content-wrap" id="secBody"></div>
+  </div>
+
+  <!-- COMMON DISEASES LIST -->
+  <div class="screen" id="screen-diseases">
+    <div class="back-row"><button class="back-btn" onclick="goToDashboard()">←</button></div>
+    <div class="page-title"><div class="eyebrow">Common diseases for your dog</div><h2 id="diseaseListTitle">Health Watchlist</h2></div>
+    <div class="content-wrap">
+      <div class="search-box">
+        <span class="si">🔍</span>
+        <input id="diseaseSearchInput" placeholder="Enter your dog's disease or health concern" onkeydown="if(event.key==='Enter')runSearch()"/>
+        <button class="search-go" onclick="runSearch()">Search</button>
+      </div>
+      <div id="diseaseListBody"></div>
+    </div>
+  </div>
+
+  <!-- DISEASE SIGNALS -->
+  <div class="screen" id="screen-signals">
+    <div class="back-row"><button class="back-btn" onclick="goToDashboard()">←</button></div>
+    <div class="page-title"><div class="eyebrow">Watch for</div><h2>Disease Signals</h2></div>
+    <div class="content-wrap" id="signalsBody"></div>
+  </div>
+
+  <!-- DISEASE-SPECIFIC PLAN -->
+  <div class="screen" id="screen-plan">
+    <div class="back-row"><button class="back-btn" onclick="goBackFromPlan()">←</button></div>
+    <div class="content-wrap" id="planBody"></div>
+  </div>
+
+  <!-- COMPLETE REPORT -->
+  <div class="screen" id="screen-report">
+    <div class="back-row"><button class="back-btn" onclick="goToDashboard()">←</button></div>
+    <div class="page-title"><div class="eyebrow">Mode 1 · General overview</div><h2>Complete Care Report</h2></div>
+    <div class="content-wrap" id="reportBody"></div>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================================
+   TOMMY ROUTINE — KNOWLEDGE BASE
+   Every fact below is transcribed only from the breed's own uploaded PDF,
+   or from the "For All Dogs" PDF where explicitly marked. Nothing is
+   invented, and nothing is shared across breeds except through the
+   documented fallback path (see findDisease()).
+   ========================================================================= */
+
+const ALL_ID = "all";
+
+const DATA = {
+
+beagle:{
+  name:"Beagle", emoji:"🐾", accent:"#E7B14A",
+  food:{intro:"Puppies (2–6 months): feed 3–4 times a day — small stomachs and high energy needs. Adults (6+ months): feed 2 times a day, morning and evening.",
+    items:[
+      {t:"Amount", d:"Typically 1 to 1.5 cups of high-quality dry food per day for an adult, split into two meals."},
+      {t:"Diet type", d:"High-protein kibble (chicken or turkey) with fiber."},
+      {t:"Feeding tip", d:"Use a slow-feeder bowl. Beagles \"inhale\" their food, which can cause bloating."}
+    ]},
+  foodAvoid:{items:[
+    {t:"Toxic foods", d:"Chocolate, grapes/raisins (causes kidney failure), onions, garlic, and xylitol (artificial sweetener in gum/peanut butter).", tags:[]},
+    {t:"Specific to Beagles", d:"Avoid high-fat \"people food\" and table scraps. Beagles gain weight very easily, which hurts their backs.", tags:["obesity","ivdd"]},
+    {t:"Watch out", d:"Beagles are \"walking stomachs\" and will eat non-food items like socks or rocks. Keep floors clear.", tags:[]}
+  ]},
+  activities:{intro:"At least 60 minutes of exercise every day.",items:[
+    {t:"Scent games", d:"\"Sniffari\" walks (letting them sniff as much as they want) or hiding treats around the house. This tires their brain more than running."},
+    {t:"Physical", d:"Brisk walking, light jogging, or fetching."},
+    {t:"Social", d:"They are pack animals and love playing with other dogs."}
+  ]},
+  activitiesAvoid:{items:[
+    {t:"Off-leash walking", d:"Never walk a Beagle off-leash in an unfenced area. If they catch a scent (like a rabbit), they will run off and ignore your calls.", tags:[]},
+    {t:"High jumping", d:"Discourage jumping off high furniture or out of tall cars. Their long backs are prone to injury.", tags:["ivdd"]},
+    {t:"Isolation", d:"Do not leave them alone for long periods without activity; they will howl and destroy things (separation anxiety).", tags:[]}
+  ]},
+  medicines:{items:[
+    {t:"Preventatives (essential)", d:"Monthly heartworm prevention and flea/tick prevention (chewables or spot-on treatments).", tags:[]},
+    {t:"Ear care", d:"Not a medication, but use ear cleaning solution weekly. Their floppy ears trap moisture and cause infections easily.", tags:["ear-infections"]},
+    {t:"Supplements", d:"Omega-3 / Fish Oil (for coat and joints) and Glucosamine (for joint health as they age).", tags:["ivdd"]}
+  ]},
+  environment:{items:[
+    {t:"Secure fencing", d:"You need a securely fenced yard. Beagles are escape artists who can dig under or climb over weak fences."},
+    {t:"Indoors", d:"They should live indoors with the family. They are not good outdoor-only dogs because they get lonely and loud."},
+    {t:"Scent-proofing", d:"Keep trash cans locked or hidden; a Beagle will tip them over to find food."}
+  ]},
+  diseases:[
+    {id:"obesity", name:"Obesity", desc:"The #1 health issue. Keep them slim to protect their spine."},
+    {id:"ear-infections", name:"Ear Infections", desc:"Due to poor air circulation in their ears."},
+    {id:"ivdd", name:"Intervertebral Disc Disease (IVDD)", desc:"Back/spine issues similar to Dachshunds."},
+    {id:"cherry-eye", name:"Cherry Eye", desc:"A red, swollen mass in the corner of the eye."},
+    {id:"epilepsy", name:"Epilepsy", desc:"Beagles are genetically prone to seizures."}
+  ]
+},
+
+doberman:{
+  name:"Doberman", emoji:"🐕‍🦺", accent:"#8B7A94",
+  food:{intro:"Puppies (2–6 months): feed 3–4 times a day to support rapid bone and muscle growth without stressing their joints. Adults (12+ months): feed 2 times a day, morning and evening.",
+    items:[
+      {t:"Amount", d:"Typically 3.5 to 5 cups of high-quality large-breed dry food daily, split evenly between meals."},
+      {t:"Diet type", d:"High-protein, moderate-fat kibble with real meat as the first ingredient. Look for formulas containing L-carnitine and taurine for heart support.", tags:["dcm"]},
+      {t:"Feeding tip", d:"Use a slow-feeder bowl on the floor. Dobermans are highly susceptible to fatal bloat; do not use raised bowls unless directed by a vet.", tags:["bloat-gdv"]}
+    ]},
+  foodAvoid:{items:[
+    {t:"Toxic foods", d:"Chocolate, grapes/raisins, onions, garlic, macadamia nuts, and xylitol.", tags:[]},
+    {t:"Specific to Dobermans", d:"Avoid high-sodium (salty) treats. They are prone to heart issues, and excess salt strains their cardiovascular system.", tags:["dcm"]},
+    {t:"Large single meals", d:"Never give them one massive meal or allow them to drink excessive amounts of water immediately after eating.", tags:["bloat-gdv"]}
+  ]},
+  activities:{intro:"At least 1.5 to 2 hours of high-energy exercise every day.",items:[
+    {t:"Mental stimulation", d:"Advanced obedience training, agility courses, and tracking/scent work. Their genius-level intellect must be kept busy."},
+    {t:"Physical", d:"Running, hiking, brisk fetching, or jogging alongside a bicycle once they are fully matured."},
+    {t:"Work", d:"They love tasks like carrying a doggie backpack or practicing precise agility drills."}
+  ]},
+  activitiesAvoid:{items:[
+    {t:"Post-meal exercise", d:"Strictly avoid strenuous running, playing, or training for 1 hour before and 2 hours after meals to prevent Bloat (GDV).", tags:["bloat-gdv"]},
+    {t:"Forced puppy running", d:"Avoid forced, repetitive running on hard surfaces (like concrete) until they are 18 months old to allow growth plates to fuse properly.", tags:[]},
+    {t:"Isolation", d:"Avoid leaving them alone in a yard or crate for extended periods. Lack of human contact causes severe anxiety and neurotic behaviors like flank-sucking or pacing.", tags:[]}
+  ]},
+  medicines:{items:[
+    {t:"Preventatives (essential)", d:"Monthly heartworm prevention and flea/tick prevention.", tags:[]},
+    {t:"Heart supplements", d:"Daily Coenzyme Q10 (CoQ10), taurine, and L-carnitine to protect against genetic heart failure.", tags:["dcm"]},
+    {t:"Joint & skin care", d:"Omega-3 fish oils to maintain their short, sleek coat and protect their hard-working joints.", tags:[]}
+  ]},
+  environment:{items:[
+    {t:"Temperature control", d:"They have a very single, thin coat and zero body fat. They cannot tolerate cold weather and must live completely indoors with climate control."},
+    {t:"Yard space", d:"A home with a large, securely fenced yard is ideal. Fencing should be at least 5 to 6 feet tall, as they are excellent jumpers."},
+    {t:"Family inclusion", d:"They are nicknamed \"Velcro dogs\" because they stick to their owners. They must live indoors as a central part of the family structure to remain stable and gentle."}
+  ]},
+  diseases:[
+    {id:"dcm", name:"Dilated Cardiomyopathy (DCM)", desc:"A fatal genetic heart condition where the heart becomes enlarged and weak. Regular vet screenings are critical."},
+    {id:"bloat-gdv", name:"Gastric Dilatation-Volvulus (Bloat)", desc:"The stomach fills with gas and twists, cutting off blood flow. This is a top medical emergency."},
+    {id:"vwd", name:"Von Willebrand's Disease (vWD)", desc:"A genetic blood clotting disorder similar to hemophilia."},
+    {id:"wobbler-syndrome", name:"Wobbler Syndrome", desc:"A neurological disease caused by cervical spine compression, leading to a wobbly walk."},
+    {id:"hypothyroidism", name:"Hypothyroidism", desc:"Underactive thyroid leading to weight gain, lethargy, and skin issues."}
+  ]
+},
+
+german_shepherd:{
+  name:"German Shepherd", emoji:"🐕", accent:"#B08655",
+  food:{intro:"German Shepherds are large, active working dogs with highly sensitive digestive systems. They require a high-protein, calorie-dense diet but must be fed in carefully controlled blocks. Puppies (up to 6 months): feed 3–4 times a day. Adults (6+ months): feed 2 times a day.",
+    items:[
+      {t:"What to feed", d:"Look for specialized large-breed formulas with 18% to 25% lean protein (chicken or fish). Incorporate Omega-3 and Omega-6 fatty acids to nurture their dense double coats."},
+      {t:"Volume", d:"Typically 2.5 to 4.5 cups of premium kibble daily for an adult, depending on weight and work rate."}
+    ]},
+  foodAvoid:{items:[
+    {t:"Fillers", d:"Heavily avoid cheap dog foods packed with corn, wheat, and soy. German Shepherds have inherently sensitive guts, and these fillers frequently cause food allergies, chronic loose stools, or excessive gas.", tags:["skin-allergies"]},
+    {t:"Toxic items", d:"Absolute restriction on grapes, raisins, chocolate, onions, garlic, and products containing xylitol (sugar-free peanut butter).", tags:[]},
+    {t:"High-fat scraps", d:"Avoid feeding table scraps, oily gravies, or ghee. High-fat human meals rapidly lead to severe pancreatitis or sudden bloating.", tags:["bloat-gdv"]}
+  ]},
+  activities:{intro:"German Shepherds rank among the most intelligent and energetic breeds. They require a minimum of 60 to 90 minutes of intense physical and mental stimulation daily.",items:[
+    {t:"Obedience & agility", d:"They live to work. Incorporating command training sessions or basic agility work keeps their brains tired."},
+    {t:"Mental puzzles & scent work", d:"Hide their favorite toys or treats around the yard. Solving problems reduces destructive behaviors like digging or frantic barking at home."},
+    {t:"Controlled fetch & jogging", d:"Great for building lean muscle, but track their posture during these games."}
+  ]},
+  activitiesAvoid:{items:[
+    {t:"Strenuous exercise around meals", d:"Never let a German Shepherd run, jump, or play intensely 1 hour before or 1 hour after eating. This strict rule prevents fatal stomach twisting (GDV).", tags:["bloat-gdv"]},
+    {t:"High-impact jumping for puppies", d:"Do not let growing puppies (under 15 months) jump repeatedly off walls, catch high frisbees, or sprint on slippery floors. Their long bones and growth plates are fragile.", tags:["hip-elbow-dysplasia"]},
+    {t:"Unsupervised access to objects", d:"Avoid letting them chew small plastic toys or rocks; they are heavy chewers and will swallow debris, causing gut blockages.", tags:[]}
+  ]},
+  medicines:{items:[
+    {t:"Advanced joint supplements", d:"This is non-negotiable for German Shepherds. Start them early (around age 1 or 2) on daily Glucosamine, Chondroitin, and MSM. This maintains synovial fluid and delays joint degeneration.", tags:["hip-elbow-dysplasia"]},
+    {t:"Probiotics", d:"Highly recommended to strengthen their fragile digestive tract.", tags:["epi"]},
+    {t:"Routine medications", d:"Ensure annual core vaccinations (DHPPi + Rabies), regular deworming schedules (every 3 months), and strict monthly spot-on/oral tick prevention to prevent debilitating tick fever.", tags:[]}
+  ]},
+  environment:{items:[
+    {t:"Anti-slip flooring", d:"Because of their heavy build and genetic joint vulnerabilities, slippery tiles (marble or polished granite) can severely injure their hips. Place rubber mats, rugs, or anti-skid foam tiling in their primary walking paths."},
+    {t:"Cool living spaces", d:"Their dense double coats cause them to overheat rapidly. Provide continuous shade, dynamic ventilation, or air conditioning during peak afternoon hours."},
+    {t:"Inclusion", d:"German Shepherds are deeply loyal \"velcro\" dogs. They do not tolerate being chained outdoors or isolated in a compound; structural neglect turns them anxious or overly aggressive."}
+  ]},
+  diseases:[
+    {id:"hip-elbow-dysplasia", name:"Hip & Elbow Dysplasia", desc:"A severe genetic malformation of the joint socket that leads to painful arthritis and eventual lameness."},
+    {id:"bloat-gdv", name:"Bloat / Gastric Dilatation-Volvulus (GDV)", desc:"A life-threatening emergency where the deep-chested stomach fills with gas and twists on its axis. Always use a slow-feeder bowl to slow down their eating pace."},
+    {id:"epi", name:"Exocrine Pancreatic Insufficiency (EPI)", desc:"A breed-specific genetic condition where the pancreas cannot produce digestive enzymes, resulting in rapid weight loss despite a massive appetite."},
+    {id:"dm", name:"Degenerative Myelopathy (DM)", desc:"A progressive neurological disease of the spinal cord that causes gradual paralysis of the hind legs in older GSDs."},
+    {id:"skin-allergies", name:"Skin & Environmental Allergies", desc:"Highly prone to atopic dermatitis, causing red, itchy skin and hair loss, which requires routine ear cleaning and medicated baths."}
+  ]
+},
+
+golden_retriever:{
+  name:"Golden Retriever", emoji:"🐕‍🦺", accent:"#E1A94B",
+  food:{intro:"Golden Retrievers are famous for their joyous energy and their absolute love for food. They have a slow metabolism combined with an endless appetite, making them highly prone to obesity. Puppies (up to 6 months): feed 3–4 times a day. Adults (6+ months): feed 2 times a day (morning and evening).",
+    items:[
+      {t:"What to feed", d:"High-quality large-breed dry kibble. Look for formulas rich in Omega-3 fatty acids (like fish oil) to keep their long, beautiful coat shiny and prevent dry skin."},
+      {t:"Volume", d:"Typically 2 to 3.5 cups of premium kibble daily for an adult, carefully measured. Never free-feed (leaving food out all day).", tags:["obesity"]}
+    ]},
+  foodAvoid:{items:[
+    {t:"Excessive treats & table scraps", d:"Golden Retrievers will beg masterfully, but fatty human foods, butter, and ghee can easily cause weight gain or dangerous pancreatitis.", tags:["obesity"]},
+    {t:"Toxic items", d:"Absolute restriction on grapes and raisins (causes kidney failure), chocolate, onions, garlic, coffee, and xylitol (found in sugar-free foods).", tags:[]},
+    {t:"Cooked bones", d:"Never give them cooked chicken or mutton bones; they splinter easily and can pierce their stomach or intestinal walls.", tags:[]}
+  ]},
+  activities:{intro:"Goldens are natural athletes bred for retrieving birds all day. They need at least 45 to 60 minutes of physical exercise daily to stay healthy and calm indoors.",items:[
+    {t:"Swimming", d:"Goldens love water. Swimming is the perfect exercise because it burns massive amounts of energy while completely protecting their joints from impact.", tags:["hip-elbow-dysplasia"]},
+    {t:"Retrieving games", d:"Long games of fetch with a ball or frisbee fulfill their instinctual urge to hold things in their mouth."},
+    {t:"Brisk walks & hikes", d:"A combination of morning and evening walks with plenty of time to sniff and explore."}
+  ]},
+  activitiesAvoid:{items:[
+    {t:"Exercise directly after eating", d:"Never let a Golden Retriever run, swim, or play intensely for at least 1 hour after a meal. Like all deep-chested breeds, they are at risk for Bloat (GDV), where the stomach twists and cuts off blood flow.", tags:[]},
+    {t:"Repetitive high-impact jumping", d:"Avoid letting young puppies (under 12–18 months) jump off high surfaces, catch high frisbees, or run on hard concrete. Their growth plates take time to fuse properly.", tags:["hip-elbow-dysplasia"]},
+    {t:"Strenuous play in peak heat", d:"Goldens have heavy double coats and overheat easily. Avoid heavy exercise during the hot afternoon hours.", tags:[]}
+  ]},
+  medicines:{items:[
+    {t:"Joint supplements (crucial)", d:"Because they are highly prone to hip issues, start your Golden on Glucosamine, Chondroitin, and MSM supplements by age 2 or 3 to protect their joint cartilage.", tags:["hip-elbow-dysplasia"]},
+    {t:"Skin & coat supplements", d:"Salmon oil or Omega-3 supplements help reduce seasonal shedding and keep their skin moisturized.", tags:["hot-spots"]},
+    {t:"Routine medications", d:"Keep up with annual core vaccines (DHPPi + Rabies), regular deworming schedules (every 3 months), and strict monthly spot-on or oral tick/flea prevention.", tags:[]}
+  ]},
+  environment:{items:[
+    {t:"Grip on floors", d:"Slippery marble, granite, or tiled floors are terrible for a Golden's hips. Use rugs, runners, or anti-skid mats in areas where they run or stand up frequently to prevent injuries."},
+    {t:"Cooling options", d:"Their thick coat means they thrive in cool conditions. Ensure they have access to an air-conditioned room or cool tiled floors during summer."},
+    {t:"Family proximity", d:"Golden Retrievers are deeply social \"family dogs.\" They suffer from severe separation anxiety if left alone in a backyard or isolated from human contact. They need to live indoors with their pack."}
+  ]},
+  diseases:[
+    {id:"hip-elbow-dysplasia", name:"Hip & Elbow Dysplasia", desc:"Genetic conditions where the joints do not fit perfectly, leading to painful arthritis, limping, and mobility issues."},
+    {id:"cancer", name:"Cancer", desc:"Goldens statistically have a higher risk of certain cancers (like hemangiosarcoma and lymphoma) later in life compared to other breeds. Regular vet checkups are crucial."},
+    {id:"ear-infections", name:"Ear Infections", desc:"Their beautiful, floppy ears trap moisture and dirt very easily. You must clean their ears weekly with a vet-approved ear cleaner, especially after they go swimming."},
+    {id:"hot-spots", name:"Hot Spots (Acute Moist Dermatitis)", desc:"Itchy, raw skin infections that develop rapidly under their thick fur if they stay wet or suffer from flea allergies."},
+    {id:"obesity", name:"Obesity", desc:"Overeating leads to extra weight, which rapidly accelerates joint damage and heart issues."}
+  ]
+},
+
+labrador:{
+  name:"Labrador", emoji:"🦮", accent:"#D9BE85",
+  food:{intro:"Labradors are highly food-motivated and prone to obesity, so strict portion control is vital. Puppies (2–6 months): feed 3–4 times a day. Adults (6+ months): feed 2 times a day (morning and evening) to prevent bloating.",
+    items:[
+      {t:"What to feed", d:"High-quality dry kibble or home-cooked meals with boiled chicken/fish, rice, and vegetables (carrots/pumpkin)."},
+      {t:"Volume", d:"Typically 2 to 2.5 cups of high-quality dry food per day for an adult, but always measure based on the specific calorie count of the brand.", tags:["obesity"]}
+    ]},
+  foodAvoid:{items:[
+    {t:"Toxic", d:"Grapes and raisins (kidney failure), chocolate, onions, garlic, and xylitol (found in sugar-free gum/peanut butter).", tags:[]},
+    {t:"Avoid", d:"Fatty meat scraps, ghee, or heavy dairy (can cause pancreatitis) and cooked bones (splinter and puncture the stomach).", tags:[]},
+    {t:"Caution", d:"Wheat or corn fillers if your dog shows signs of skin allergies.", tags:[]}
+  ]},
+  activities:{intro:"Labradors are high-energy working dogs that need 45–60 minutes of daily activity to remain calm indoors.",items:[
+    {t:"Swimming", d:"The best exercise for Labs as it burns energy without hurting their joints.", tags:["hip-elbow-dysplasia"]},
+    {t:"Fetch", d:"Plays into their natural retrieving instinct."},
+    {t:"Scent work", d:"Hide treats in the garden or house to mentally tire them out."},
+    {t:"Brisk walking", d:"Two 30-minute walks per day are standard for adults."}
+  ]},
+  activitiesAvoid:{items:[
+    {t:"High-impact jumping", d:"Avoid letting them jump out of tall SUVs or off high furniture, as this stresses their heavy joints.", tags:["hip-elbow-dysplasia"]},
+    {t:"Forced running", d:"Do not force puppies (under 12 months) to run long distances on concrete; their bones are still soft.", tags:[]},
+    {t:"Exercising after eating", d:"Wait at least 1 hour after meals before exercise to prevent Bloat (GDV), a life-threatening twisted stomach.", tags:["bloat-gdv"]}
+  ]},
+  medicines:{items:[
+    {t:"Vaccines", d:"Core vaccines (DHPPi + Rabies) annually as per your vet's schedule.", tags:[]},
+    {t:"Deworming", d:"Every 3 months for adults.", tags:[]},
+    {t:"Preventatives", d:"Monthly tick/flea prevention (spot-on or oral chews) is critical in tropical climates to prevent tick fever.", tags:[]},
+    {t:"Supplements", d:"Glucosamine and Chondroitin supplements are highly recommended for Labradors after age 5 to protect against arthritis.", tags:["hip-elbow-dysplasia"]}
+  ]},
+  environment:{items:[
+    {t:"Climate", d:"They overheat easily. In hot weather, keep them in AC or cool, shaded areas. Never leave them in a parked car or on a hot terrace."},
+    {t:"Floor", d:"Avoid slippery tiles (marble/granite) which can cause hip splaying. Use rugs or yoga mats to give them grip."},
+    {t:"Space", d:"They thrive in homes where they can be close to the family. They are not good solitary outdoor guard dogs; isolation leads to destructive chewing."}
+  ]},
+  diseases:[
+    {id:"obesity", name:"Obesity", desc:"The #1 health issue in Labs; leads to diabetes and joint pain."},
+    {id:"hip-elbow-dysplasia", name:"Hip & Elbow Dysplasia", desc:"A genetic malformation of the joints causing lameness."},
+    {id:"ear-infections", name:"Ear Infections", desc:"Their floppy ears trap moisture. Clean them weekly (\"Otitis media\")."},
+    {id:"bloat-gdv", name:"Bloat (GDV)", desc:"Eating too fast causes the stomach to twist. Use a \"slow-feeder bowl\" to prevent this."}
+  ]
+},
+
+pomeranian:{
+  name:"Pomeranian", emoji:"🦊", accent:"#EAB9C4",
+  food:{intro:"Pomeranians are tiny, high-energy toy dogs with fast metabolisms. Because of their tiny stomachs, they cannot eat large meals at once and are highly prone to hypoglycemia (sudden drops in blood sugar) if left without food for too long. Puppies (up to 6 months): feed 3–4 times a day in very small, measured portions. Adults (6+ months): feed 3 times a day (breakfast, lunch, and dinner) to keep their blood sugar stable.",
+    items:[
+      {t:"What to feed", d:"High-quality toy or small-breed specific dry kibble. The kibble size must be extra small so their tiny jaws can chew it safely. You can mix in boiled, shredded chicken or pumpkin."},
+      {t:"Volume", d:"Typically only 1/4 to 1/2 cup of high-quality dry food per day, split across their daily meals.", tags:["hypoglycemia"]}
+    ]},
+  foodAvoid:{items:[
+    {t:"Large / hard kibbles", d:"Avoid standard adult dog food kibble, which poses a severe choking hazard.", tags:[]},
+    {t:"Grapes & raisins", d:"Highly toxic; even a single grape can cause acute kidney failure in a dog this small.", tags:[]},
+    {t:"Onions, garlic, & xylitol", d:"Xylitol (found in sugar-free peanut butter or baked goods) triggers a fatal drop in blood sugar within minutes.", tags:["hypoglycemia"]},
+    {t:"Caffeine & chocolate", d:"Toxic stimulants that can cause heart failure in tiny breeds.", tags:[]},
+    {t:"Salty or greasy human snacks", d:"Avoid giving chips, butter, or fried food, which easily triggers severe pancreatitis.", tags:[]}
+  ]},
+  activities:{intro:"Despite their tiny size, Pomeranians are alert and energetic. They do not need miles of running, but they do require regular mental and physical stimulation.",items:[
+    {t:"Short walkies", d:"Two brief, 15 to 20-minute walks per day at a gentle pace are perfect."},
+    {t:"Indoor games", d:"They love playing fetch indoors with miniature plush toys or small balls."},
+    {t:"Basic trick training", d:"Poms are incredibly smart and enjoy learning tricks (like \"spin\" or \"shake hands\"), which easily burns off their mental energy."}
+  ]},
+  activitiesAvoid:{items:[
+    {t:"Jumping from heights", d:"Never let a Pomeranian jump off high beds, sofas, or car seats. Their bones are as fragile as matchsticks, and jumping frequently causes broken legs or dislocated kneecaps. Use pet ramps or lift them down manually.", tags:["luxating-patella"]},
+    {t:"Walking on a collar", d:"Never attach a leash to a regular neck collar. Pomeranians have incredibly fragile windpipes. Pulling on a collar can easily cause a life-threatening collapsed trachea. Always use a secure, Y-shaped chest harness.", tags:["tracheal-collapse"]},
+    {t:"Rough play with big dogs", d:"Avoid dog parks with large, unstructured dog sections. A larger dog can accidentally injure or step on a Pomeranian during play.", tags:[]}
+  ]},
+  medicines:{items:[
+    {t:"Joint supplements", d:"Pomeranians highly benefit from early daily supplements containing Glucosamine and Chondroitin to protect their fragile knee joints.", tags:["luxating-patella"]},
+    {t:"Omega-3 fatty acids (fish oil)", d:"Vital for maintaining that iconic, fluffy double coat and preventing dry, itchy skin.", tags:["hair-loss"]},
+    {t:"Dental care routine", d:"Because their teeth are crowded into tiny mouths, they get plaque buildup very quickly. Daily brushing with dog-safe enzymatic toothpaste or vet-approved dental gels is non-negotiable.", tags:["dental-disease"]},
+    {t:"Routine vax & deworming", d:"Annual core vaccines (DHPPi + Rabies), quarterly deworming, and monthly tick/flea/heartworm preventatives based on weight.", tags:[]}
+  ]},
+  environment:{items:[
+    {t:"Safe-proofing the house", d:"Block off gaps under furniture or balcony railings. A tiny Pomeranian puppy can easily slip through balcony bars or get stuck in small crevices."},
+    {t:"Indoor living", d:"They are strictly indoor dogs. They do not handle extreme heat or cold well because of their tiny body mass. Keep them in climate-controlled environments during hot summers."},
+    {t:"Quiet retreat", d:"Poms can sometimes get overwhelmed or start barking at minor noises. Provide a small, cozy crate or covered dog bed where they can feel safe."}
+  ]},
+  diseases:[
+    {id:"luxating-patella", name:"Luxating Patella", desc:"A common genetic condition where the kneecap slips out of its groove, causing a limping or \"skipping\" gait."},
+    {id:"tracheal-collapse", name:"Tracheal Collapse", desc:"The cartilage rings of the windpipe weaken, leading to a chronic, harsh \"goose-honk\" cough."},
+    {id:"hair-loss", name:"Severe Hair Loss Syndrome (Black Skin Disease / Alopecia X)", desc:"A cosmetic genetic condition that causes gradual hair loss and hyperpigmentation of the skin, leaving parts of the body bald."},
+    {id:"dental-disease", name:"Severe Dental Disease", desc:"Early tooth loss and gum infections caused by crowded teeth."},
+    {id:"hypoglycemia", name:"Hypoglycemia", desc:"Sudden drops in blood sugar, especially in puppies, which can cause lethargy, shaking, or seizures if a meal is missed."}
+  ]
+},
+
+pug:{
+  name:"Pug", emoji:"🐶", accent:"#C9A98A",
+  food:{intro:"Pugs are famous for their love of food, slow metabolism, and sedentary nature. They gain weight incredibly fast, which puts fatal pressure on their short airways. Strict portion control is mandatory. Puppies (up to 6 months): feed 3–4 times a day in precisely measured, tiny portions. Adults (6+ months): feed 2 times a day (morning and evening).",
+    items:[
+      {t:"What to feed", d:"High-quality dry kibble specially formulated for small breeds or Pugs. The kibble shape should be designed for their flat faces and underbites, making it easier to pick up and chew."},
+      {t:"Volume", d:"Typically only 1/2 to 1 cup of premium dry food per day for an adult, divided into their two meals. Never free-feed a Pug.", tags:["obesity","boas"]}
+    ]},
+  foodAvoid:{items:[
+    {t:"Excessive treats & table scraps", d:"Avoid giving fatty human food, butter, cheese, or rice leftovers. Even a tiny piece of extra food can push a Pug into the overweight category.", tags:["obesity"]},
+    {t:"Toxic items", d:"Absolute restriction on grapes, raisins, chocolate, onions, garlic, and items containing xylitol (found in some sugar-free peanut butters).", tags:[]},
+    {t:"Hard items", d:"Avoid very hard bones or chews that can fracture their small teeth or cause a choking hazard due to their narrow throats.", tags:[]}
+  ]},
+  activities:{intro:"Pugs are low-to-moderate energy dogs, but they still require daily movement to maintain weight and joint health.",items:[
+    {t:"Short, brisk walks", d:"Two gentle 15-minute walks a day (ideally early morning and late evening when it is cool)."},
+    {t:"Indoor play", d:"Gentle games of fetch with soft, lightweight toys or rolling a ball across the room."},
+    {t:"Mental enrichment", d:"Snuffle mats or puzzle toys that release kibble slowly to keep them occupied without causing physical exhaustion."}
+  ]},
+  activitiesAvoid:{items:[
+    {t:"Exercising in heat and humidity", d:"Never exercise a Pug during the hot, humid parts of the day. Because of their flat faces (brachycephalic syndrome), they cannot cool themselves down by panting effectively and can suffer from fatal heatstroke within minutes.", tags:["boas"]},
+    {t:"Walking on a collar", d:"Never attach a leash to a throat collar. Pugs have fragile airways and eyes that can literally pop out of their sockets (eye proptosis) from severe neck pressure. Always use a secure body harness.", tags:["corneal-ulcers"]},
+    {t:"Intense running or hiking", d:"Avoid forcing them to run alongside a bicycle or take long, strenuous hikes. If your Pug starts gasping, wheezing loudly, or their tongue turns bluish-purple, stop immediately and cool them down.", tags:["boas"]}
+  ]},
+  medicines:{items:[
+    {t:"Wrinkle cleaning solution", d:"Pugs have deep facial folds that trap moisture, dirt, and bacteria. Wipe their facial wrinkles daily with a damp cloth or vet-approved antiseptic wipes, then dry them completely to prevent painful skin infections.", tags:["skin-fold-dermatitis"]},
+    {t:"Eye lubricants", d:"Because their eyes protrude, they dry out easily and are prone to scratches. Your vet may recommend routine lubricating eye drops.", tags:["corneal-ulcers"]},
+    {t:"Joint supplements", d:"Omega-3 fatty acids and mild joint supplements help protect their spine and hips.", tags:[]},
+    {t:"Routine care", d:"Keep up with annual core vaccines (DHPPi + Rabies), quarterly deworming, and monthly tick/flea spot-ons.", tags:[]}
+  ]},
+  environment:{items:[
+    {t:"Air conditioning / climate control", d:"Pugs are strictly indoor dogs and must live in a cool, well-ventilated environment. During peak summers, air conditioning is a necessity, not a luxury, for this breed."},
+    {t:"Safe stairs", d:"Their compact bodies and short legs make tall stairs difficult and risky. Block off steep staircases to prevent falls that can damage their spine."},
+    {t:"Dust & smoke-free", d:"Keep their living area free from heavy dust, chemical sprays, and cigarette smoke, as their compromised airways are highly sensitive to respiratory irritants."}
+  ]},
+  diseases:[
+    {id:"boas", name:"Brachycephalic Obstructive Airway Syndrome (BOAS)", desc:"Narrow nostrils and an elongated soft palate that make breathing difficult, causing heavy snoring, wheezing, and heat intolerance."},
+    {id:"obesity", name:"Obesity", desc:"The leading cause of secondary health complications, severely shortening a Pug's lifespan."},
+    {id:"pde", name:"Pug Dog Encephalitis (PDE)", desc:"A breed-specific, fatal inflammatory disease of the brain that causes seizures and blindness."},
+    {id:"corneal-ulcers", name:"Corneal Ulcers & Dry Eye", desc:"Scratches and open sores on their prominent eyeballs due to lack of natural moisture or irritation from facial hair."},
+    {id:"skin-fold-dermatitis", name:"Skin Fold Dermatitis", desc:"Yeast and bacterial infections in the facial wrinkles and tail creases if not kept clean and dry."}
+  ]
+},
+
+rottweiler:{
+  name:"Rottweiler", emoji:"🐕", accent:"#8C6650",
+  food:{intro:"Puppies (2–5 months): feed 3–4 times a day. They need slow, steady growth to protect their joints. Adults (12+ months): feed 2 times a day (morning and evening).",
+    items:[
+      {t:"Amount", d:"Typically 4 to 6 cups of high-quality large-breed kibble daily, split evenly between meals."},
+      {t:"Diet type", d:"High-quality protein (beef, chicken, or lamb) with controlled calcium-to-phosphorus ratios for large breeds."},
+      {t:"Tip", d:"Restrict activity for 1 hour after eating to prevent standard bloat, which is a life-threatening emergency in deep-chested dogs.", tags:["gastric-torsion"]}
+    ]},
+  foodAvoid:{items:[
+    {t:"Toxic foods", d:"Chocolate, grapes/raisins, onions, garlic, and anything containing xylitol (artificial sweetener).", tags:[]},
+    {t:"Specific to Rottweilers", d:"Avoid foods with excessive fat or fillers. Rottweilers have a slow metabolism after maturing and are highly prone to obesity.", tags:[]},
+    {t:"Bone warning", d:"Avoid cooked bones. Their powerful jaws can easily splinter them, causing internal tearing.", tags:[]}
+  ]},
+  activities:{intro:"At least 2 hours of daily physical and mental exercise.",items:[
+    {t:"Mental stimulation", d:"Advanced obedience training, agility, or nose work. A bored Rottweiler becomes destructive."},
+    {t:"Physical", d:"Long brisk walks, hiking, and swimming (great for low-impact joint exercise).", tags:["hip-elbow-dysplasia"]},
+    {t:"Work", d:"They love having a job, such as pulling a cart or carrying a doggie backpack on walks."}
+  ]},
+  activitiesAvoid:{items:[
+    {t:"High-impact puppy play", d:"Avoid forced running, intense fetch, or jumping on hard surfaces until they are at least 18 to 24 months old (when growth plates close).", tags:["hip-elbow-dysplasia","cruciate-tears"]},
+    {t:"Aggressive games", d:"Avoid intense tug-of-war or rough wrestling matches with humans. This can accidentally encourage dominant or biting behaviours.", tags:[]},
+    {t:"Unsupervised public play", d:"Do not leave them unattended at dog parks. Their playing style can look aggressive to other dogs, leading to fights.", tags:[]}
+  ]},
+  medicines:{items:[
+    {t:"Preventatives (essential)", d:"Monthly Heartworm prevention and Flea/Tick prevention are critical.", tags:[]},
+    {t:"Joint supplements", d:"Daily Glucosamine, Chondroitin, and MSM starting from puppyhood to support their heavy joints.", tags:["hip-elbow-dysplasia"]},
+    {t:"Heart health", d:"Coenzyme Q10 (CoQ10) or Omega-3 fish oils to support cardiovascular health.", tags:["aortic-stenosis"]}
+  ]},
+  environment:{items:[
+    {t:"Space", d:"They do best in a home with a large, securely fenced yard. They are not well-suited for cramped apartment living."},
+    {t:"Security", d:"High, sturdy fencing is mandatory. They are natural guard dogs and will protect their perceived boundary lines."},
+    {t:"Social setting", d:"They must live indoors as part of the family. If isolated in a backyard, they can become dangerously aggressive and territorial."}
+  ]},
+  diseases:[
+    {id:"hip-elbow-dysplasia", name:"Hip and Elbow Dysplasia", desc:"Genetic malformation of the joints leading to severe arthritis."},
+    {id:"aortic-stenosis", name:"Aortic Stenosis", desc:"A congenital heart defect that causes the heart to work harder to pump blood."},
+    {id:"gastric-torsion", name:"Gastric Torsion (Bloat)", desc:"The stomach twists and traps gas, requiring immediate emergency surgery."},
+    {id:"cancer-osteosarcoma", name:"Cancer (Osteosarcoma)", desc:"Bone cancer is unfortunately highly prevalent in this breed."},
+    {id:"cruciate-tears", name:"Cruciate Ligament Tears", desc:"Knee injuries common in heavy, active dogs."}
+  ]
+},
+
+shih_tzu:{
+  name:"Shih Tzu", emoji:"🐩", accent:"#D7A0A8",
+  food:{intro:"Puppies (2–6 months): feed 3–4 times a day. Small breeds are prone to hypoglycemia (low blood sugar) if they go too long without food. Adults (10–12+ months): feed 2–3 times a day.",
+    items:[
+      {t:"Amount", d:"Typically 1/2 to 1 cup of high-quality toy-breed kibble daily, split into smaller meals."},
+      {t:"Diet type", d:"Small-sized kibble rich in Omega-3 and Omega-6 fatty acids to keep their long coat shiny and skin healthy."}
+    ]},
+  foodAvoid:{items:[
+    {t:"Toxic foods", d:"Chocolate, grapes/raisins, onions, garlic, macadamia nuts, and xylitol.", tags:[]},
+    {t:"Specific to Shih Tzus", d:"Avoid hard treats or large kibble sizes. Their flat faces and unique jaw structures make it difficult to chew large pieces, creating a choking hazard.", tags:["brachycephalic-syndrome"]},
+    {t:"Table scraps", d:"Avoid fatty meats. They have sensitive stomachs and are highly prone to pancreatitis from high-fat human foods.", tags:[]}
+  ]},
+  activities:{intro:"Short walks of 20 to 30 minutes per day, combined with indoor playtime.",items:[
+    {t:"Mental stimulation", d:"Interactive puzzle toys and indoor hide-and-seek with treats."},
+    {t:"Play", d:"Gentle fetching with small, lightweight plush toys."},
+    {t:"Social", d:"They enjoy being around family and generally get along well with other polite pets."}
+  ]},
+  activitiesAvoid:{items:[
+    {t:"Midday heat exercise", d:"Never exercise them during hot or humid hours. Their flat faces make it incredibly difficult for them to cool down, leading to fast heatstroke.", tags:["brachycephalic-syndrome"]},
+    {t:"Jumping off furniture", d:"Do not let them jump from beds or couches. Their long backs and short legs make them highly vulnerable to spinal injuries.", tags:["ivdd"]},
+    {t:"Rough play", d:"Avoid rough play with larger dogs or small children who might accidentally step on or drop them.", tags:[]}
+  ]},
+  medicines:{items:[
+    {t:"Preventatives (essential)", d:"Monthly Heartworm prevention and Flea/Tick prevention.", tags:[]},
+    {t:"Eye drops", d:"Artificial tears or veterinarian-prescribed eye drops. Because their eyes bulge slightly, they dry out easily and get irritated by dust.", tags:["eye-problems"]},
+    {t:"Ear cleaners", d:"Weekly use of a drying ear-cleaning solution to prevent yeast infections.", tags:[]}
+  ]},
+  environment:{items:[
+    {t:"Climate control", d:"Air conditioning is mandatory in summer. They cannot tolerate heat and humidity."},
+    {t:"Indoor living", d:"They are strictly indoor companion dogs. They should never live outside."},
+    {t:"Stair safety", d:"Use pet ramps or stairs for high furniture to protect their joints, and keep dangerous staircases blocked off."}
+  ]},
+  diseases:[
+    {id:"brachycephalic-syndrome", name:"Brachycephalic Syndrome", desc:"Breathing difficulties due to their flat facial structure and narrowed nostrils."},
+    {id:"eye-problems", name:"Eye Problems", desc:"Corneal ulcers, cataracts, and Progressive Retinal Atrophy (PRA)."},
+    {id:"patellar-luxation", name:"Patellar Luxation", desc:"Floating kneecaps that slip out of place."},
+    {id:"ivdd", name:"Intervertebral Disc Disease (IVDD)", desc:"Slipped or ruptured discs in the spine."},
+    {id:"periodontal-disease", name:"Periodontal (Dental) Disease", desc:"Overcrowded teeth in their small mouths trap plaque, leading to early tooth loss."}
+  ]
+},
+
+all:{
+  name:"For All Dogs", emoji:"🐾", accent:"#8FA37E", isFallback:true,
+  food:{intro:"Here is the universal data that applies to all dogs, regardless of their breed, size, or age. This serves as the baseline foundation for responsible dog ownership. Puppies (under 6 months): feed 3–4 times a day due to small stomachs and high growth needs. Adult dogs (over 1 year): feed 2 times a day (morning and evening) to maintain steady energy and digestion.",
+    items:[
+      {t:"Amount", d:"Always measure food based on the dog's ideal target weight and activity level, using the guide on the food packaging."},
+      {t:"Water", d:"Fresh, clean water must be accessible 24/7 without exception."}
+    ]},
+  foodAvoid:{items:[
+    {t:"Absolute toxins", d:"Chocolate, grapes, raisins, onions, garlic, chives, macadamia nuts, and avocado.", tags:[]},
+    {t:"Xylitol / birch sugar", d:"A sugar substitute found in sugar-free gum, candy, and some peanut butters. It is instantly fatal to dogs.", tags:[]},
+    {t:"Dangerous items", d:"Cooked bones (they splinter and tear organs), caffeine, alcohol, raw yeast dough, and excessive salt or sugar.", tags:[]}
+  ]},
+  activities:{intro:"Every dog needs at least 30 to 60 minutes of physical movement daily to prevent obesity and behavior issues.",items:[
+    {t:"Mental exercise", d:"Brain games (sniffing, puzzle toys, basic command training) are just as tiring and important as physical walks.", tags:["obesity"]},
+    {t:"Bathroom breaks", d:"Adult dogs need a minimum of 3–4 outdoor opportunities daily to relieve themselves."}
+  ]},
+  activitiesAvoid:{items:[
+    {t:"Extreme weather workouts", d:"Avoid intense exercise during peak summer heat (causes heatstroke) or freezing winter temperatures (causes frostbite).", tags:[]},
+    {t:"Post-meal rushing", d:"Do not allow heavy running or jumping immediately after a large meal, as this can upset the stomach or cause fatal twisting.", tags:[]},
+    {t:"Forced puppy runs", d:"Never take a puppy on long, forced runs on hard pavement until their skeletal growth plates are fully closed.", tags:[]}
+  ]},
+  medicines:{items:[
+    {t:"Core parasite prevention", d:"Year-round, monthly protection against heartworms, fleas, and ticks is mandatory worldwide.", tags:["parasites"]},
+    {t:"Deworming", d:"Regular intestinal deworming scheduled according to your veterinarian's regional guidelines.", tags:["parasites"]},
+    {t:"Vaccinations", d:"Up-to-date core vaccines, including Rabies (often legally required) and DHPP (Distemper, Hepatitis, Parvovirus, Parainfluenza).", tags:[]}
+  ]},
+  environment:{items:[
+    {t:"Shelter", d:"Access to a temperature-regulated, dry, and safe resting area away from extreme cold, heat, wind, or rain."},
+    {t:"Safety", d:"A secure living space (fenced yard or leashed walking) to prevent escaping into dangerous traffic or getting lost."},
+    {t:"Poison-proofing", d:"Household cleaners, human medications, pesticides, and toxic plants (like lilies) must be locked away out of reach."}
+  ]},
+  diseases:[
+    {id:"periodontal-disease", name:"Periodontal (Dental) Disease", desc:"Affects over 80% of dogs by age three, causing pain, tooth loss, and potential heart or kidney damage."},
+    {id:"obesity", name:"Obesity", desc:"The most widespread preventable disease, which severely shortens lifespan and destroys joints."},
+    {id:"ear-skin-infections", name:"Ear and Skin Infections", desc:"Caused by trapped moisture, bacteria, or untreated environmental and food allergies."},
+    {id:"parasites", name:"Internal/External Parasites", desc:"Hookworms, roundworms, fleas, and ticks if routine preventatives are skipped."}
+  ]
+}
+
+};
+
+const BREED_ORDER = ["german_shepherd","pomeranian","golden_retriever","labrador","doberman","shih_tzu","rottweiler","beagle","pug","all"];
+
+/* =========================================================================
+   STATE + NAVIGATION
+   ========================================================================= */
+let state = { breed:null, currentSectionKey:null, currentDisease:null };
+
+function el(id){return document.getElementById(id);}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  el(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function renderBreedGrid(){
+  const grid = el('breedGrid');
+  grid.innerHTML = BREED_ORDER.map(key=>{
+    const b = DATA[key];
+    const cls = key==='all' ? 'tag-card all-dogs' : 'tag-card';
+    return `<div class="${cls}" onclick="selectBreed('${key}')">
+      <div class="tag-emoji">${b.emoji}</div>
+      <div class="tag-name">${b.name}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectBreed(key){
+  state.breed = key;
+  el('appbar').style.display = 'flex';
+  el('appbarBreed').textContent = DATA[key].name;
+  renderDashboard();
+  showScreen('screen-dashboard');
+}
+
+function goHome(){
+  showScreen('screen-dashboard');
+}
+function goToBreedPicker(){
+  el('appbar').style.display='none';
+  showScreen('screen-welcome');
+}
+function goToDashboard(){
+  showScreen('screen-dashboard');
+}
+
+const SECTION_META = {
+  food:{icon:"🍖", label:"Food to Give", eyebrow:"Section 1"},
+  foodAvoid:{icon:"🚫", label:"Food to Avoid", eyebrow:"Section 2"},
+  activities:{icon:"🎾", label:"Healthy Activities", eyebrow:"Section 3"},
+  activitiesAvoid:{icon:"⚠️", label:"Activities to Avoid", eyebrow:"Section 4"},
+  medicines:{icon:"💊", label:"Medicines", eyebrow:"Section 5"},
+  environment:{icon:"🏡", label:"Better Environment", eyebrow:"Section 6"}
+};
+
+function renderDashboard(){
+  const b = DATA[state.breed];
+  el('breedHeader').innerHTML = `
+    <div class="icon" style="--accent:${b.accent}22; background:${b.accent}33;">${b.emoji}</div>
+    <div class="meta">
+      <div class="eyebrow">Tommy Routine</div>
+      <h2>${b.name}</h2>
+    </div>`;
+
+  const cards = Object.keys(SECTION_META).map((k,i)=>{
+    const m = SECTION_META[k];
+    return `<div class="dash-card" onclick="openSection('${k}')">
+      <div class="ic">${m.icon}</div>
+      <div class="lbl">${m.label}</div>
+    </div>`;
+  });
+
+  el('dashGrid').innerHTML = `
+    ${cards.join('')}
+    <div class="dash-card wide" onclick="openDiseaseList()">
+      <div style="display:flex;align-items:center;gap:10px;"><span class="ic">🩺</span><span class="lbl">Common Diseases</span></div>
+      <span style="color:var(--ink-faint);">›</span>
+    </div>
+    <div class="dash-card wide" onclick="openSignals()">
+      <div style="display:flex;align-items:center;gap:10px;"><span class="ic">🚨</span><span class="lbl">Disease Signals</span></div>
+      <span style="color:var(--ink-faint);">›</span>
+    </div>
+    <div class="dash-card wide report" onclick="openReport()">
+      <div style="display:flex;align-items:center;gap:10px;"><span class="ic">📋</span><span class="lbl">Complete Dog Care Report</span></div>
+      <span style="color:#F1EAD9;">›</span>
+    </div>
+  `;
+}
+
+function openSection(key){
+  state.currentSectionKey = key;
+  const b = DATA[state.breed];
+  const sec = b[key];
+  const meta = SECTION_META[key];
+  el('secEyebrow').textContent = `${meta.eyebrow} · ${b.name}`;
+  el('secTitle').textContent = meta.label;
+
+  let html = '';
+  if(sec.intro){
+    html += `<div class="warn-strip amber"><span class="wi">${meta.icon}</span><span>${sec.intro}</span></div>`;
+  }
+  const isAvoid = (key==='foodAvoid' || key==='activitiesAvoid');
+  const cardClass = key==='food' ? 'card safe' : (isAvoid ? 'card danger' : 'card');
+  html += sec.items.map(it=>`<div class="${cardClass}"><p class="k">${it.t}</p><p class="v">${it.d}</p></div>`).join('');
+
+  if(key==='medicines'){
+    html += `<div class="warn-strip">⚕️&nbsp;<span>This information is for educational purposes. Consult a qualified veterinarian before giving medication or starting treatment.</span></div>`;
+  }
+  el('secBody').innerHTML = html;
+  showScreen('screen-section');
+}
+
+function openDiseaseList(){
+  const b = DATA[state.breed];
+  el('diseaseListTitle').textContent = `Common Diseases for Your ${b.name}`;
+  el('diseaseSearchInput').value = '';
+  el('diseaseListBody').innerHTML = b.diseases.map(d=>`
+    <div class="disease-row" onclick="openDiseasePlan('${state.breed}','${d.id}')">
+      <div class="dtext"><p class="dname">${d.name}</p><p class="ddesc">${d.desc}</p></div>
+      <div class="arrow">›</div>
+    </div>`).join('');
+  showScreen('screen-diseases');
+}
+
+function openSignals(){
+  const b = DATA[state.breed];
+  el('signalsBody').innerHTML = b.diseases.map(d=>`
+    <div class="card">
+      <p class="k">${d.name}</p>
+      <p class="v">${d.desc}</p>
+    </div>`).join('') +
+    `<div class="warn-strip">🚨&nbsp;<span>If your dog shows serious, sudden, or worsening symptoms, contact a qualified veterinarian immediately.</span></div>`;
+  showScreen('screen-signals');
+}
+
+/* ---------- disease-specific plan (Mode 2) ---------- */
+function openDiseasePlan(breedKey, diseaseId){
+  const b = DATA[breedKey];
+  const disease = b.diseases.find(d=>d.id===diseaseId);
+  renderPlan(b, disease, breedKey===state.breed ? 'own' : 'fallback');
+  showScreen('screen-plan');
+}
+
+function goBackFromPlan(){
+  // return to whichever list made sense
+  if(el('screen-diseases').classList.contains('active')===false){
+    showScreen('screen-dashboard');
+  }
+}
+
+function collectTagged(sectionItems, diseaseId){
+  return (sectionItems||[]).filter(it => it.tags && it.tags.includes(diseaseId));
+}
+
+function planSectionHTML(icon, title, list, renderer){
+  if(!list || list.length===0){
+    return `<div class="plan-section"><div class="ph"><span class="pi">${icon}</span><h3>${title}</h3></div><div class="empty-note">No specific ${title.toLowerCase()} guidance is tagged to this condition in the available knowledge source.</div></div>`;
+  }
+  return `<div class="plan-section"><div class="ph"><span class="pi">${icon}</span><h3>${title}</h3></div><ul>${list.map(it=>`<li>${renderer(it)}</li>`).join('')}</ul></div>`;
+}
+
+function renderPlan(b, disease, sourceType){
+  const diet = collectTagged(b.food.items, disease.id).concat(
+      // diet items live partly in food.items (tags) - avoid duplicated array types
+    []
+  );
+  const dietAvoid = collectTagged(b.foodAvoid.items, disease.id);
+  const acts = collectTagged(b.activities.items, disease.id);
+  const actsAvoid = collectTagged(b.activitiesAvoid.items, disease.id);
+  const meds = collectTagged(b.medicines.items, disease.id);
+  const env = collectTagged(b.environment.items, disease.id);
+
+  const dietAll = diet.concat(dietAvoid);
+
+  let html = `
+    <div class="plan-header">
+      <div class="eyebrow">Mode 2 · Disease-specific care</div>
+      <h2>${disease.name}</h2>
+      <p>${disease.desc}</p>
+      <span class="plan-source">Source: ${sourceType==='own' ? b.name+' knowledge base' : 'For All Dogs (fallback)'}</span>
+    </div>
+
+    <div class="plan-section">
+      <div class="ph"><span class="pi">✅</span><h3>What To Do</h3></div>
+      <div class="empty-note">See the Diet, Activities, Therapy/Medicines, and Environment guidance below — everything shown here is scoped only to ${disease.name}.</div>
+    </div>
+
+    ${planSectionHTML("🍖","Diet Plan", dietAll, it=>`<b>${it.t}:</b> ${it.d}`)}
+    ${planSectionHTML("🎾","Activities", acts.concat(actsAvoid), it=>`<b>${it.t}:</b> ${it.d}`)}
+    ${planSectionHTML("💊","Therapy / Medicines", meds, it=>`<b>${it.t}:</b> ${it.d}`)}
+    ${planSectionHTML("🏡","Environment", env, it=>`<b>${it.t}:</b> ${it.d}`)}
+
+    <div class="plan-section">
+      <div class="ph"><span class="pi">🚨</span><h3>Warning Signals</h3></div>
+      <ul><li>${disease.desc}</li></ul>
+    </div>
+
+    <div class="warn-strip">⚕️&nbsp;<span><b>When to seek veterinary help:</b> If your dog shows serious, sudden, or worsening symptoms related to ${disease.name.toLowerCase()}, contact a qualified veterinarian immediately. This plan is educational and never replaces professional diagnosis or treatment.</span></div>
+  `;
+  el('planBody').innerHTML = html;
+}
+
+/* ---------- search with fallback logic ---------- */
+function normalize(s){ return s.toLowerCase().trim(); }
+
+function findDisease(query){
+  const q = normalize(query);
+  if(!q) return null;
+  const own = DATA[state.breed];
+
+  // Priority 1: selected breed's own PDF
+  let hit = own.diseases.find(d => normalize(d.name).includes(q) || q.includes(normalize(d.name)) || normalize(d.id).includes(q));
+  if(hit) return {disease:hit, breedKey:state.breed, source:'own'};
+
+  // Priority 2: For All Dogs PDF
+  const all = DATA[ALL_ID];
+  hit = all.diseases.find(d => normalize(d.name).includes(q) || q.includes(normalize(d.name)) || normalize(d.id).includes(q));
+  if(hit) return {disease:hit, breedKey:ALL_ID, source:'fallback'};
+
+  return null;
+}
+
+function runSearch(){
+  const q = el('diseaseSearchInput').value;
+  if(!q.trim()) return;
+  const result = findDisease(q);
+  if(result){
+    renderPlan(DATA[result.breedKey], result.disease, result.source);
+    showScreen('screen-plan');
+  } else {
+    el('planBody').innerHTML = `
+      <div class="not-covered">
+        <div class="nc-ic">🩺</div>
+        <h3>Not covered yet</h3>
+        <p>This condition is not covered in the available Tommy Routine knowledge sources. Please consult a qualified veterinarian for accurate diagnosis and treatment.</p>
+      </div>`;
+    showScreen('screen-plan');
+  }
+}
+
+/* ---------- Complete Care Report (Mode 1) ---------- */
+function openReport(){
+  const b = DATA[state.breed];
+  const sectionBlock = (icon,title,items,renderer)=>`
+    <div class="report-block">
+      <h3><span>${icon}</span> ${title}</h3>
+      ${items.map(it=>`<div class="card"><p class="k">${it.t}</p><p class="v">${it.d}</p></div>`).join('')}
+    </div>`;
+
+  let html = `
+    <div class="plan-header">
+      <div class="eyebrow">Complete overview</div>
+      <h2>${b.name} — Full Care Report</h2>
+      <p>${b.food.intro || ''}</p>
+    </div>
+  `;
+  html += sectionBlock("🍖","Food to Give", b.food.items);
+  html += sectionBlock("🚫","Food to Avoid", b.foodAvoid.items);
+  html += sectionBlock("🎾","Healthy Activities", b.activities.items);
+  html += sectionBlock("⚠️","Activities to Avoid", b.activitiesAvoid.items);
+  html += sectionBlock("💊","Medicines", b.medicines.items);
+  html += sectionBlock("🏡","Better Environment", b.environment.items);
+
+  html += `<div class="report-block"><h3><span>🩺</span> Common Diseases</h3>`;
+  html += b.diseases.map(d=>`<div class="card"><p class="k">${d.name}</p><p class="v">${d.desc}</p></div>`).join('');
+  html += `</div>`;
+
+  html += `<div class="report-block"><h3><span>🚨</span> Disease Signals</h3><div class="warn-strip">If your dog shows serious, sudden, or worsening symptoms, contact a qualified veterinarian immediately.</div></div>`;
+
+  html += `<div class="report-block"><h3><span>🛡️</span> General Preventive Care</h3>`;
+  html += b.medicines.items.map(it=>`<div class="card safe"><p class="k">${it.t}</p><p class="v">${it.d}</p></div>`).join('');
+  html += `</div>`;
+
+  html += `
+    <div class="warn-strip">⚕️&nbsp;<span><b>Important warnings:</b> Never invent medication or dosages. Always consult a qualified veterinarian for diagnosis, medication, or serious health conditions. Tommy Routine does not guarantee that any condition can be cured using this guidance.</span></div>
+    <div class="report-block">
+      <h3>✅ What The Owner Should Do</h3>
+      <div class="card safe"><p class="v">Follow the feeding schedule and portions above, keep up with preventatives and vaccinations, provide daily exercise appropriate to this breed, and watch for the disease signals listed.</p></div>
+    </div>
+    <div class="report-block">
+      <h3>🚫 What The Owner Should Avoid</h3>
+      <div class="card danger"><p class="v">Avoid all foods listed under "Food to Avoid," the activities listed under "Activities to Avoid," and never substitute this report for professional veterinary care.</p></div>
+    </div>
+  `;
+
+  el('reportBody').innerHTML = html;
+  showScreen('screen-report');
+}
+
+/* ---------- init ---------- */
+renderBreedGrid();
+</script>
+</body>
+</html>
